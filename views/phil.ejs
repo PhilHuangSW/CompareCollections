@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phil</title>
+</head>
+
+<body>
+  <h1>Phil's Collection: <%= phil.length %></h1>
+
+  <% for( let index = 0; index < phil.length; index++ ) { %>
+  <h5><%= phil[index].name.$t %> </h5>
+  <% } %>
+
+  <h1>Dan's Collection: <%= dan.length %> </h1>
+
+
+</body>
+
+</html>
