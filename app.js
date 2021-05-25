@@ -48,7 +48,7 @@ app.get('/phil', retrieveCollection, (req, res) => {
 
 app.post('/personal', async (req, res) => {
   const { username } = req.body;
-  const url = ('https://boardgamegeek.com/xmlapi2/collection?username=' + username + '&own=1&excludesubtype=boardgameexpansion')
+  const url = ('https://boardgamegeek.com/xmlapi2/collection?username=' + username + '&own=1&excludesubtype=boardgameexpansion&stats=1')
   // console.log(url);
   let personalArray = [];
   try {
@@ -56,11 +56,17 @@ app.post('/personal', async (req, res) => {
     const dataText = await data.text();
     const personal = await parser.toJson(dataText, { object: true });
     personalArray = personal.items.item
-    res.render('personal', { personalArray, username });
+    if (personalArray.length > 0) {
+      res.render('personal', { personalArray, username });
+    } else {
+      res.render('error', { username });
+    }
+
     // console.log(personalArray[0]);
   } catch (e) {
     console.log(e);
     console.log('help I crashed');
+    res.render('error', { username });
   }
 })
 

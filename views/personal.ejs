@@ -21,6 +21,8 @@
           <th scope="col">#</th>
           <th scope="col">Image</th>
           <th scope="col">Title</th>
+          <th scope="col">Num Players</th>
+          <th scope="col">Playtime</th>
         </tr>
       </thead>
 
@@ -32,6 +34,18 @@
               style="width:50px;height:50px">
           </td>
           <td><%= personalArray[i].name.$t %> </td>
+          <td>
+            <%= personalArray[i].stats.minplayers  %>
+            <% if (personalArray[i].stats.maxplayers != personalArray[i].stats.minplayers) { %>
+            - <%= personalArray[i].stats.maxplayers %>
+            <% } %>
+          </td>
+          <td>
+            <%= personalArray[i].stats.minplaytime  %>
+            <% if (personalArray[i].stats.maxplaytime != personalArray[i].stats.minplaytime) { %>
+            - <%= personalArray[i].stats.maxplaytime %>
+            <% } %> mins
+          </td>
         </tr>
         <% } %>
 
