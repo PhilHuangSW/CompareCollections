@@ -36,11 +36,85 @@ const retrieveCollection = async (req, res, next) => {
     // console.log(e)
     next(e)
   }
+}
+
+app.get('/', (req, res) => {
+  res.render('home');
+})
+
+app.get('/phil', retrieveCollection, (req, res) => {
+  res.render('phil', { phil, dan })
+})
+
+app.post('/personal', async (req, res) => {
+  const { username } = req.body;
+  const url = ('https://boardgamegeek.com/xmlapi2/collection?username=' + username + '&own=1&excludesubtype=boardgameexpansion')
+  // console.log(url);
+  let personalArray = [];
+  try {
+    const data = await fetch(url);
+    const dataText = await data.text();
+    const personal = await parser.toJson(dataText, { object: true });
+    personalArray = personal.items.item
+    res.render('personal', { personalArray, username });
+    // console.log(personalArray[0]);
+  } catch (e) {
+    console.log(e);
+    console.log('help I crashed');
+  }
+})
+
+app.get('/collections', retrieveCollection, (req, res) => {
+  // const c = await fetch('https://netrunnerdb.com/api/2.0/public/card/02043');
+  // const ca = await c.json();
+  // const xml = await phil.json();
+  let filtered = [];
+  let matched = false
+
+  for (let ph in phil) {
+    for (let da in dan) {
+      if (phil[ph].name.$t == dan[da].name.$t) {
+        matched = true
+      }
+    }
+    if (matched === false) {
+      filtered.push([phil[ph].name.$t, phil[ph].image])
+    }
+    matched = false
+  }
+  res.render('collection', { filtered, phil, dan })
+})
+
+app.listen(8080, () => {
+  console.log('Listening on port 8080!');
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // const danData = await fetch('https://boardgamegeek.com/xmlapi2/collection?username=danshoehsu&own=1&excludesubtype=boardgameexpansion');
   // const danDataText = danData.text();
   // const dan = parser.toJson(danDataText, { object: true });
   // next();
-}
 // fetch('https://boardgamegeek.com/xmlapi2/collection?username=Youya&own=1&excludesubtype=boardgameexpansion')
 //   .then(response => response.text())
 //   .then(str => {
@@ -67,36 +141,3 @@ const retrieveCollection = async (req, res, next) => {
 
 
 // phil = JSON.stringify(phil);
-
-app.get('/', (req, res) => {
-  res.render('home');
-})
-
-app.get('/phil', retrieveCollection, (req, res) => {
-  res.render('phil', { phil, dan })
-})
-
-app.get('/collection', retrieveCollection, (req, res) => {
-  // const c = await fetch('https://netrunnerdb.com/api/2.0/public/card/02043');
-  // const ca = await c.json();
-  // const xml = await phil.json();
-  let filtered = [];
-  let matched = false
-
-  for (let ph in phil) {
-    for (let da in dan) {
-      if (phil[ph].name.$t == dan[da].name.$t) {
-        matched = true
-      }
-    }
-    if (matched === false) {
-      filtered.push([phil[ph].name.$t, phil[ph].image])
-    }
-    matched = false
-  }
-  res.render('collection', { filtered, phil, dan })
-})
-
-app.listen(8080, () => {
-  console.log('Listening on port 8080!');
-})
