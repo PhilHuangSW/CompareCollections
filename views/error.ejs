@@ -8,27 +8,87 @@
   <title>Error</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="stylesheets/home.css" type="text/css">
 </head>
 
 <body>
-  <div class="container">
+  <div class="container pt-3">
     <h1 class="text-center mb-5">Sorry!</h1>
 
+    <% if (locals.username) { %>
     <h5>We weren't able to find a username of "<%= username %>"</h5>
+    <% } else { %>
+    <h5>We weren't able to compare collections! Couldn't find either users' collections.</h5>
+    <% } %>
 
-    <form action="/personal" method="POST">
-      <div class="mb-3">
-        <label for="username" class="form-label">BGG Username <strong><span
-              class="text-danger">(case-sensitive)</span></strong></label>
-        <input type="text" class="form-control mb-2" id="username" name="username" aria-describedby="collectionUsername"
-          placeholder="bgg-user123">
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </div>
-    </form>
+    <label for="selecting">
+      Choose to find a single collection or compare two users' collections!
+    </label>
+    <select name="selecting" id="selecting" class="form-select" aria-label="selecting single or comparing collections"
+      onclick="selection()">
+      <option value="single">Single Collection</option>
+      <option value="compare">Comparing Collections</option>
+    </select>
+
+
+
+
+    <!-- FORM for a SINGLE USER -->
+    <div id="single" class="pt-5">
+      <form action="/personal" method="POST">
+        <div class="mb-3">
+          <label for="username" class="form-label">BGG Username <strong><span
+                class="text-danger">(case-sensitive)</span></strong></label>
+          <input type="text" class="form-control mb-2" id="username" name="username"
+            aria-describedby="collectionUsername" placeholder="bgg-user123">
+
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+
+
+    <!-- FORM for COMPARING TWO COLLECTIONS -->
+    <div id="compare" class="d-none pt-5">
+      <form action="/compare" method="POST">
+        <div class="mb-3">
+          <label for="main" class="form-label">BGG Username <strong><span
+                class="text-danger">(case-sensitive)</span></strong></label>
+          <input type="text" class="form-control mb-2" id="main" name="main" aria-describedby="mainCollectionUsername"
+            placeholder="Main BGG Username">
+
+          <label for="compare" class="form-label">BGG Username <strong><span
+                class="text-danger">(case-sensitive)</span></strong></label>
+          <input type="text" class="form-control mb-2" id="compare" name="compare"
+            aria-describedby="comparedCollectionUsername" placeholder="Compared BGG Username ">
+
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+
+
   </div>
 
+
+  </div>
+
+  <script>
+    const selectSingle = document.getElementById("selecting");
+    const single = document.getElementById("single");
+    const compare = document.getElementById("compare");
+
+    const selection = () => {
+      if(selectSingle.value === "compare") {
+        single.classList.add("d-none");
+        compare.classList.remove("d-none");
+      } else {
+        single.classList.remove("d-none");
+        compare.classList.add("d-none");
+      }
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 </body>
 

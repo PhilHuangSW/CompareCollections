@@ -1,0 +1,60 @@
+body {
+  background-color: #FAF1E6;
+}
+
+.form-control {
+  background-color: #E4EFE7;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: 1px solid #064420;
+  -webkit-text-fill-color: #064420;
+  -webkit-box-shadow: 0 0 0px 1000px #E4EFE7 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-control, select {
+  background-color: #E4EFE7;
+}
+
+.form-control, active {
+  background-color: #E4EFE7;
+}
+
+.form-select {
+  background-color: #E4EFE7;
+}
+
+h1 {
+  color: #064420;
+}
+
+.form-label {
+  color: #064420;
+}
+
+label {
+  color: #064420;
+}
+
+button {
+  background-color: #064420!important;
+  border-color: #E4EFE7!important;
+  color: #FDFAF6!important;
+}
+
+/* 
+  Color Pallet 
+  #FAF1E6
+  #FDFAF6
+  #E4EFE7
+  #064420
+*/

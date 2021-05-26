@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 require('body-parser-xml')(bodyParser);
 const fetch = require('node-fetch');
 const parser = require('xml2json');
+const morgan = require('morgan');
 
 const app = express();
 
@@ -15,41 +16,18 @@ app.set('view engine', 'ejs');
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.xml());
+app.use(morgan('tiny'));
+app.use(express.static(path.join(__dirname, '/public')));
 
-let phil = [];
-let dan = [];
 
-const retrieveCollection = async (req, res, next) => {
-  try {
-    const data = await fetch('https://boardgamegeek.com/xmlapi2/collection?username=Youya&own=1&excludesubtype=boardgameexpansion');
-    const dataText = await data.text();
-    const phils = await parser.toJson(dataText, { object: true });
-    phil = phils.items.item
-
-    const danData = await fetch('https://boardgamegeek.com/xmlapi2/collection?username=danshoehsu&own=1&excludesubtype=boardgameexpansion');
-    const danDataText = await danData.text();
-    const dans = await parser.toJson(danDataText, { object: true });
-    dan = dans.items.item
-    next()
-  }
-  catch (e) {
-    // console.log(e)
-    next(e)
-  }
-}
-
+// Routes
 app.get('/', (req, res) => {
   res.render('home');
-})
-
-app.get('/phil', retrieveCollection, (req, res) => {
-  res.render('phil', { phil, dan })
 })
 
 app.post('/personal', async (req, res) => {
   const { username } = req.body;
   const url = ('https://boardgamegeek.com/xmlapi2/collection?username=' + username + '&own=1&excludesubtype=boardgameexpansion&stats=1')
-  // console.log(url);
   let personalArray = [];
   try {
     const data = await fetch(url);
@@ -61,8 +39,6 @@ app.post('/personal', async (req, res) => {
     } else {
       res.render('error', { username });
     }
-
-    // console.log(personalArray[0]);
   } catch (e) {
     console.log(e);
     console.log('help I crashed');
@@ -70,25 +46,44 @@ app.post('/personal', async (req, res) => {
   }
 })
 
-app.get('/collections', retrieveCollection, (req, res) => {
-  // const c = await fetch('https://netrunnerdb.com/api/2.0/public/card/02043');
-  // const ca = await c.json();
-  // const xml = await phil.json();
+app.post('/compare', async (req, res) => {
+  const { main, compare } = req.body;
+  const mainUrl = ('https://boardgamegeek.com/xmlapi2/collection?username=' + main + '&own=1&excludesubtype=boardgameexpansion&stats=1');
+  const compareUrl = ('https://boardgamegeek.com/xmlapi2/collection?username=' + compare + '&own=1&excludesubtype=boardgameexpansion&stats=1');
   let filtered = [];
-  let matched = false
+  let mainCollection = [];
+  let compareCollection = [];
+  let matched = false;
 
-  for (let ph in phil) {
-    for (let da in dan) {
-      if (phil[ph].name.$t == dan[da].name.$t) {
-        matched = true
+  try {
+    const mainData = await fetch(mainUrl);
+    const compareData = await fetch(compareUrl);
+    const mainDataText = await mainData.text();
+    const compareDataText = await compareData.text();
+    const mainJson = await parser.toJson(mainDataText, { object: true });
+    const compareJson = await parser.toJson(compareDataText, { object: true });
+    mainCollection = mainJson.items.item;
+    compareCollection = compareJson.items.item;
+    for (let i = 0; i < mainCollection.length; i++) {
+      for (let j = 0; j < compareCollection.length; j++) {
+        if (mainCollection[i].name.$t === compareCollection[j].name.$t) {
+          matched = true;
+        }
+        if (matched === true) {
+          break;
+        }
       }
+      if (matched === false) {
+        filtered.push(mainCollection[i])
+      }
+      matched = false;
     }
-    if (matched === false) {
-      filtered.push([phil[ph].name.$t, phil[ph].image])
-    }
-    matched = false
+    res.render('compare', { filtered, mainCollection, compareCollection, main, compare })
+  } catch (e) {
+    console.log(e);
+    console.log('Help! I crashed somehow!');
+    res.render('error')
   }
-  res.render('collection', { filtered, phil, dan })
 })
 
 app.listen(8080, () => {
