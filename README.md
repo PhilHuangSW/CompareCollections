@@ -1,7 +1,10 @@
 <!---<a href="https://netrunnerlegacy.herokuapp.com" alt="Phil's Netunner Legacy Decks banner link to website">
   <img src="https://github.com/PhilHuangSW/philslegacynetrunner/blob/master/banner.PNG" /></a>--->
   
-<h1 align="center">Collection Comparer (https://afternoon-crag-24327.herokuapp.com)</h1>
+<h1 align="center">Collection Comparer 
+  
+  (https://afternoon-crag-24327.herokuapp.com)
+</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-v1.1-blue" />
